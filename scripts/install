@@ -1,0 +1,47 @@
+#!/bin/bash
+### App file generated with YoloGen, the Yunohost app generator, version .
+
+source /usr/share/yunohost/helpers
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression "Setting up source files..."
+
+ynh_setup_source --source_id="ota-provider" --dest_dir="$install_dir"
+
+chown -R $app:$app "$install_dir"
+
+#=================================================
+# SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression "Adding system configurations related to $app..."
+
+ynh_config_add_nginx
+
+ynh_config_add_systemd
+
+yunohost service add "$app" --description="Python Matter server" --log="/var/log/$app/$app.log"
+
+#=================================================
+# INSTALL APP
+#=================================================
+ynh_script_progression "Installing $app..."
+
+pushd $install_dir
+  python3 -m venv venv
+  venv/bin/pip3 install --no-cache-dir "python-matter-server[server]==$(ynh_app_upstream_version)"
+popd
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting app's systemd service..."
+
+ynh_systemctl --service="$app" --action="start"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression "Installation of $app completed"

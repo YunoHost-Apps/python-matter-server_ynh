@@ -1,0 +1,57 @@
+#!/bin/bash
+### App file generated with YoloGen, the YunoHost app generator, version .
+
+source /usr/share/yunohost/helpers
+
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Stopping a systemd service..."
+
+ynh_systemctl --service="$app" --action="stop"
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression "Upgrading source files..."
+
+ynh_setup_source --source_id="ota-provider" --dest_dir="$install_dir" --full_replace
+
+chown -R $app:$app "$install_dir"
+
+#=================================================
+# UPGRADE APP
+#=================================================
+ynh_script_progression "Installing $app..."
+
+pushd $install_dir
+  venv/bin/pip3 install --upgrade --no-cache-dir "python-matter-server[server]==$(ynh_app_upstream_version)"
+popd
+
+#=================================================
+# REAPPLY SYSTEM CONFIGURATIONS
+#=================================================
+ynh_script_progression "Upgrading system configurations related to $app..."
+
+ynh_config_add_nginx
+
+ynh_config_add_systemd
+
+yunohost service add "$app" --description="Python Matter server" --log="/var/log/$app/$app.log"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting a systemd service..."
+
+ynh_systemctl --service="$app" --action="start"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression "Upgrade of $app completed"

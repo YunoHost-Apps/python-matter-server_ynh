@@ -1,0 +1,67 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/main/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "python-matter-server"
+name = "Matter server"
+
+description.en = "Python server to interact with Matter "
+description.fr = "Serveur Python pour intéragir avec Matter"
+
+version = "8.1.2~ynh1"
+
+maintainers = ["tituspijean"]
+
+[upstream]
+license = "Apache-2.0"
+
+code = "https://github.com/matter-js/python-matter-server"
+
+[integration]
+yunohost = '>= 12.1.17'
+helpers_version = "2.1"
+architectures = "amd64" 
+multi_instance = false
+ldap = "false" 
+sso = "false"
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/python-matter-server"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+[resources]
+
+    [resources.sources]
+
+        [resources.sources.ota-provider]
+        amd64.url = "https://github.com/home-assistant-libs/matter-linux-ota-provider/releases/download/2025.9.0/chip-ota-provider-app-x86-64"
+        amd64.sha256 = "4550df7af6529e4620463d1c0127f830ec2404c817ad4c6343b29e32cec0144e"
+        arm64.url = "https://github.com/home-assistant-libs/matter-linux-ota-provider/releases/download/2025.9.0/chip-ota-provider-app-aarch64"
+        arm64.sha256 = "e068ab6c4050e23eaa6ccda9bf7eccdc4b792a2514e1098cbc12b414cd64aa7e"
+
+        format = "binary"
+        rename = "chip-ota-provider-app"
+
+        autoupdate.strategy = "latest_github_release"
+        autoupdate.asset.amd64 = ".*-x86-64$"
+        autoupdate.asset.arm64 = ".*-aarch64$"
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.ports]
+
+    [resources.apt]
+    packages = "curl libuv1 zlib1g libjson-c5 libnl-3-200 libnl-route-3-200 unzip gdb iputils-ping iproute2 python3 python3-venv "
