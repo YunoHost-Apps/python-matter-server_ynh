@@ -55,7 +55,7 @@ ram.runtime = "50M"
         arm64.url = "https://github.com/home-assistant-libs/matter-linux-ota-provider/releases/download/2025.9.0/chip-ota-provider-app-aarch64"
         arm64.sha256 = "e068ab6c4050e23eaa6ccda9bf7eccdc4b792a2514e1098cbc12b414cd64aa7e"
 
-        format = "whatever"
+        extract = false
         rename = "chip-ota-provider-app"
 
         autoupdate.strategy = "latest_github_release"

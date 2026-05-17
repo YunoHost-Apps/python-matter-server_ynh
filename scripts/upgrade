@@ -21,6 +21,7 @@ ynh_script_progression "Upgrading source files..."
 
 ynh_setup_source --source_id="ota-provider" --dest_dir="$install_dir" --full_replace
 
+chmod ug+x "$install_dir/chip-ota-provider-app"
 chown -R $app:$app "$install_dir"
 
 #=================================================
